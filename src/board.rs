@@ -1,7 +1,7 @@
-use std::fmt;
-use std::collections::HashSet;
-use rand::thread_rng;
 use rand::seq::SliceRandom;
+use rand::thread_rng;
+use std::collections::HashSet;
+use std::fmt;
 
 const SIZE: usize = 4;
 
@@ -19,7 +19,7 @@ impl Direction {
             Direction::Left => Direction::Right,
             Direction::Right => Direction::Left,
             Direction::Up => Direction::Down,
-            Direction::Down => Direction::Up
+            Direction::Down => Direction::Up,
         }
     }
 
@@ -45,7 +45,7 @@ impl fmt::Display for Direction {
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Board {
-    tiles: [u8; SIZE*SIZE],
+    tiles: [u8; SIZE * SIZE],
     empty: usize,
 }
 
@@ -53,7 +53,7 @@ impl Board {
     pub fn new() -> Board {
         let mut b = Board {
             tiles: [0; 16],
-            empty: 0
+            empty: 0,
         };
         for i in 0..16u8 {
             b.tiles[i as usize] = i;
@@ -62,7 +62,10 @@ impl Board {
     }
 
     pub fn new_from(tiles: &[u8]) -> Result<Board, &'static str> {
-        let mut b = Board { tiles: [0; 16], empty: 0};
+        let mut b = Board {
+            tiles: [0; 16],
+            empty: 0,
+        };
         let mut nums = HashSet::new();
         for (i, &t) in tiles.iter().enumerate() {
             nums.insert(t);
@@ -108,11 +111,12 @@ impl Board {
     pub fn slide_safe(&mut self, dir: Direction) -> Result<bool, &'static str> {
         let pos = self.safe_pos(dir.value());
         if pos == self.empty || pos >= self.tiles.len() {
-            return Err("Invalid move")
+            return Err("Invalid move");
         }
-        if (dir == Direction::Left || dir == Direction::Right) &&
-            ((pos / SIZE) != (self.empty / SIZE)) {
-                return Err("Invalid move")
+        if (dir == Direction::Left || dir == Direction::Right)
+            && ((pos / SIZE) != (self.empty / SIZE))
+        {
+            return Err("Invalid move");
         }
         self.tiles.swap(self.empty, pos);
         self.empty = pos;
@@ -127,9 +131,11 @@ impl Board {
 
     pub fn can_slide(&self, dir: Direction) -> bool {
         let pos = self.safe_pos(dir.value());
-        pos != self.empty && pos < self.tiles.len() &&
-            (dir == Direction::Up || dir == Direction::Down ||
-             (pos / SIZE) == (self.empty / SIZE))
+        pos != self.empty
+            && pos < self.tiles.len()
+            && (dir == Direction::Up
+                || dir == Direction::Down
+                || (pos / SIZE) == (self.empty / SIZE))
     }
 
     pub fn shuffle(&mut self) {
@@ -140,15 +146,20 @@ impl Board {
 
     pub fn solved(&self) -> bool {
         // Ignore the empty tile
-        let unsorted = self.tiles.iter()
+        let unsorted = self
+            .tiles
+            .iter()
             .zip(self.tiles[1..].iter())
             .filter(|(&t1, &t2)| t1 != 0 && t2 != 0 && t1 > t2)
             .count();
-        self.empty == self.tiles.len()-1 && unsorted == 0
+        self.empty == self.tiles.len() - 1 && unsorted == 0
     }
 
     pub fn solvable(&self) -> bool {
-        let invs: usize = self.tiles.iter().enumerate()
+        let invs: usize = self
+            .tiles
+            .iter()
+            .enumerate()
             .map(|(i, t)| (t, self.tiles[i..].iter()))
             .map(|(&t, it)| it.filter(|&&x| x != 0 && t != 0 && x < t).count())
             .sum();
@@ -163,7 +174,7 @@ impl fmt::Display for Board {
         for i in 0..4 {
             write!(f, "[")?;
             for j in 0..4 {
-                write!(f, "{}", self.tiles[i*4+j])?;
+                write!(f, "{}", self.tiles[i * 4 + j])?;
                 if j != 3 {
                     write!(f, " ")?;
                 }
@@ -182,9 +193,12 @@ mod tests {
     use super::*;
     use std::collections::HashSet;
 
-    const DEFAULT_CONFIG: &'static [u8; SIZE*SIZE] = &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-    const SOLVED_CONFIG: &'static [u8; SIZE*SIZE] = &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
-    const SOLVABLE_CONFIG: &'static [u8; SIZE*SIZE] = &[1, 2, 3, 4, 0, 5, 6, 7, 8, 10, 11, 9, 12, 13, 14, 15];
+    const DEFAULT_CONFIG: &'static [u8; SIZE * SIZE] =
+        &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+    const SOLVED_CONFIG: &'static [u8; SIZE * SIZE] =
+        &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
+    const SOLVABLE_CONFIG: &'static [u8; SIZE * SIZE] =
+        &[1, 2, 3, 4, 0, 5, 6, 7, 8, 10, 11, 9, 12, 13, 14, 15];
 
     #[test]
     fn dir_is_opposite() {
@@ -224,12 +238,12 @@ mod tests {
             tiles.insert(tile);
         }
         if tiles.len() != b.tiles.len() {
-            return false
+            return false;
         }
         for tile in &tiles {
             let value = **tile as usize;
             if value >= b.tiles.len() {
-                return false
+                return false;
             }
         }
         true
