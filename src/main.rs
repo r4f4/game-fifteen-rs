@@ -1,9 +1,9 @@
 extern crate clap;
 
+use clap::{App, Arg};
 use std::io;
 use std::io::Read;
 use std::process;
-use clap::{Arg, App};
 
 use game15::*;
 
@@ -22,21 +22,26 @@ fn main() {
         .about("Solves a 15-puzzle instance")
         .usage("game15 [--replay] [--random|<stdin>]")
         .after_help(
-"If --random is not supplied, it reads a board configuration from stdin.
+            "If --random is not supplied, it reads a board configuration from stdin.
 The format expected is one row per line, each row containing 4 space-separated numbers.
 Example:
 0 1 2 3
 4 5 6 7
 8 9 10 11
-12 13 14 15")
-        .arg(Arg::with_name("random")
+12 13 14 15",
+        )
+        .arg(
+            Arg::with_name("random")
                 .long("random")
                 .takes_value(false)
-                .help("Use a randomly generated board"))
-        .arg(Arg::with_name("replay")
+                .help("Use a randomly generated board"),
+        )
+        .arg(
+            Arg::with_name("replay")
                 .long("replay")
                 .takes_value(false)
-                .help("Replays the moves instead of just printing a list"))
+                .help("Replays the moves instead of just printing a list"),
+        )
         .get_matches();
 
     let mut board = match matches.is_present("random") {
@@ -51,8 +56,7 @@ Example:
                     for line in lines {
                         let mut v: Vec<&str> = line.split(' ').collect();
                         v.retain(|&x| x != "");
-                        let mut l: Vec<u8> = v.iter()
-                            .map(|x| x.parse::<u8>().unwrap()).collect();
+                        let mut l: Vec<u8> = v.iter().map(|x| x.parse::<u8>().unwrap()).collect();
                         config.append(&mut l);
                     }
                     match Board::new_from(config.as_slice()) {
@@ -60,16 +64,16 @@ Example:
                         Err(msg) => {
                             eprintln!("Invalid board: {}", msg);
                             process::exit(1)
-                        },
+                        }
                     }
-                },
+                }
             }
         }
     };
     println!("{}", board);
     if !board.solvable() {
         println!("Board cannot be solved");
-        return
+        return;
     }
     match Astar::run(&board) {
         Some(moves) => {
@@ -78,7 +82,7 @@ Example:
                 true => print_game_replay(&mut board, moves),
                 false => println!("{:?}", moves),
             }
-        },
+        }
         None => println!("Could not solve board"),
     }
 }
