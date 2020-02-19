@@ -13,7 +13,9 @@ struct Solution {
 
 impl Ord for Solution {
     fn cmp(&self, other: &Solution) -> Ordering {
-        other.cost.cmp(&self.cost)
+        other
+            .cost
+            .cmp(&self.cost)
             .then_with(|| self.moves.len().cmp(&other.moves.len()))
     }
 }
@@ -24,7 +26,12 @@ impl PartialOrd for Solution {
     }
 }
 
-static DIRECTIONS: [Direction; 4] = [Direction::Left, Direction::Right, Direction::Up, Direction::Down];
+static DIRECTIONS: [Direction; 4] = [
+    Direction::Left,
+    Direction::Right,
+    Direction::Up,
+    Direction::Down,
+];
 
 pub struct Astar;
 
@@ -42,35 +49,54 @@ impl Astar {
 
     pub fn run(b: &Board) -> Option<Vec<Direction>> {
         let mut heap = BinaryHeap::new();
-        let cost: usize = b.tiles().iter()
+        let cost: usize = b
+            .tiles()
+            .iter()
             .enumerate()
             .map(|(i, t)| Astar::manhattan_dist(*t, i))
             .sum();
-        heap.push(Solution {cost: cost, moves: vec![], board: b.clone()});
+        heap.push(Solution {
+            cost: cost,
+            moves: vec![],
+            board: b.clone(),
+        });
 
-        while let Some(Solution {cost: _, ref moves, ref board}) = heap.pop() {
-            if board.solved() { return Some(moves.to_vec()); }
+        while let Some(Solution {
+            cost: _,
+            ref moves,
+            ref board,
+        }) = heap.pop()
+        {
+            if board.solved() {
+                return Some(moves.to_vec());
+            }
             let n_moves = moves.len();
             for &dir in DIRECTIONS.iter() {
                 // Do not undo last move
                 if let Some(last) = moves.last() {
                     if last.opposites(dir) {
-                        continue
+                        continue;
                     }
                 }
                 if !board.can_slide(dir) {
-                    continue
+                    continue;
                 }
                 let mut b = board.clone();
                 b.slide(dir);
-                let mut nc: usize = b.tiles().iter()
+                let mut nc: usize = b
+                    .tiles()
+                    .iter()
                     .enumerate()
                     .map(|(i, t)| Astar::manhattan_dist(*t, i))
                     .sum();
                 nc += n_moves + 1;
                 let mut nm = moves.clone();
                 nm.push(dir);
-                heap.push(Solution {cost: nc, moves: nm, board: b});
+                heap.push(Solution {
+                    cost: nc,
+                    moves: nm,
+                    board: b,
+                });
             }
         }
         None
@@ -81,8 +107,10 @@ impl Astar {
 mod tests {
     use super::*;
 
-    const SOLVABLE_CONFIG: &'static [u8; 16] = &[1, 6, 2, 9, 7, 8, 4, 0, 13, 5, 3, 11, 15, 14, 10, 12];
-    const ALMOST_CONFIG: &'static [u8; 16] = &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15];
+    const SOLVABLE_CONFIG: &'static [u8; 16] =
+        &[1, 6, 2, 9, 7, 8, 4, 0, 13, 5, 3, 11, 15, 14, 10, 12];
+    const ALMOST_CONFIG: &'static [u8; 16] =
+        &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 15];
 
     #[test]
     fn solve_almost_solved() {
@@ -96,7 +124,7 @@ mod tests {
                     assert!(!board.slide_safe(dir).is_err());
                 }
                 assert!(board.solved());
-            },
+            }
             None => panic!("result should not be None"),
         }
     }
@@ -113,7 +141,7 @@ mod tests {
                     assert!(!board.slide_safe(dir).is_err());
                 }
                 assert!(board.solved());
-            },
+            }
             None => panic!("result should not be None"),
         }
     }
@@ -129,7 +157,7 @@ mod tests {
                     assert!(!board.slide_safe(dir).is_err());
                 }
                 assert!(board.solved());
-            },
+            }
             None => panic!("result should not be None"),
         }
     }
