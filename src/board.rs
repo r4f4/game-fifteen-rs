@@ -149,8 +149,8 @@ impl Board {
         let unsorted = self
             .tiles
             .iter()
-            .zip(self.tiles[1..].iter())
-            .filter(|(&t1, &t2)| t1 != 0 && t2 != 0 && t1 > t2)
+            .zip(self.tiles.iter().skip(1))
+            .filter(|(&t1, &t2)| t2 != 0 && t1 > t2)
             .count();
         self.empty == self.tiles.len() - 1 && unsorted == 0
     }
@@ -160,8 +160,7 @@ impl Board {
             .tiles
             .iter()
             .enumerate()
-            .map(|(i, t)| (t, self.tiles[i..].iter()))
-            .map(|(&t, it)| it.filter(|&&x| x != 0 && t != 0 && x < t).count())
+            .map(|(i, &t)| self.tiles.iter().skip(i).filter(|&&x| x != 0 && x < t).count())
             .sum();
         // (empty tile in even row, even # of inversions)
         match ((self.empty / SIZE) % 2 == 0, invs % 2 == 0) {
