@@ -141,7 +141,7 @@ impl Board {
     pub fn shuffle(&mut self) {
         self.tiles.shuffle(&mut thread_rng());
         // Since we know the board is valid, it must contain the empty tile (0)
-        self.empty = self.tiles.iter().position(|&x| x == 0).unwrap();
+        self.empty = self.tiles.iter().position(|&x| x == 0).expect("no empty tile?!");
     }
 
     pub fn solved(&self) -> bool {
@@ -255,11 +255,11 @@ mod tests {
         assert_eq!(b.tiles, *DEFAULT_CONFIG);
         assert_eq!(b.empty, 0);
 
-        let b = Board::new_from(DEFAULT_CONFIG).unwrap();
+        let b = Board::new_from(DEFAULT_CONFIG).expect("failed to create default board");
         assert_eq!(b.tiles, *DEFAULT_CONFIG);
         assert_eq!(b.empty, 0);
 
-        let b = Board::new_from(SOLVED_CONFIG).unwrap();
+        let b = Board::new_from(SOLVED_CONFIG).expect("failed to create solved board");
         assert_eq!(b.tiles, *SOLVED_CONFIG);
         assert_eq!(b.empty, 15);
     }
@@ -338,25 +338,25 @@ mod tests {
 
     #[test]
     fn board_solvable() {
-        let b = Board::new_from(SOLVED_CONFIG).unwrap();
+        let b = Board::new_from(SOLVED_CONFIG).expect("failed to create solved board");
         assert!(b.solvable());
 
-        let b = Board::new_from(DEFAULT_CONFIG).unwrap();
+        let b = Board::new_from(DEFAULT_CONFIG).expect("failed to create default board");
         assert!(!b.solvable());
 
-        let b = Board::new_from(SOLVABLE_CONFIG).unwrap();
+        let b = Board::new_from(SOLVABLE_CONFIG).expect("failed to create solvable board");
         assert!(b.solvable());
     }
 
     #[test]
     fn board_solved() {
-        let b = Board::new_from(SOLVED_CONFIG).unwrap();
+        let b = Board::new_from(SOLVED_CONFIG).expect("failed to create solved board");
         assert!(b.solved());
 
-        let b = Board::new_from(DEFAULT_CONFIG).unwrap();
+        let b = Board::new_from(DEFAULT_CONFIG).expect("failed to create default board");
         assert!(!b.solved());
 
-        let b = Board::new_from(SOLVABLE_CONFIG).unwrap();
+        let b = Board::new_from(SOLVABLE_CONFIG).expect("failed to create solvable board");
         assert!(!b.solved());
     }
 
@@ -364,7 +364,7 @@ mod tests {
     fn board_clone() {
         let b = Board::new();
         let clone1 = b.clone();
-        let clone2 = Board::new_from(&b.tiles).unwrap();
+        let clone2 = Board::new_from(&b.tiles).expect("failed to create clone board");
         assert_eq!(b.tiles, clone1.tiles);
         assert_ne!(b.tiles.as_ptr(), clone1.tiles.as_ptr());
         assert_eq!(b.empty, clone1.empty);

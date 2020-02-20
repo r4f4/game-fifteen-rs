@@ -116,7 +116,7 @@ mod tests {
     fn solve_almost_solved() {
         let res = Board::new_from(ALMOST_CONFIG);
         assert!(res.is_ok());
-        let mut board = res.unwrap();
+        let mut board = res.expect("failed to create almost board");
         assert!(board.solvable());
         match Astar::run(&board) {
             Some(moves) => {
@@ -133,7 +133,7 @@ mod tests {
     fn solve_solvable() {
         let res = Board::new_from(SOLVABLE_CONFIG);
         assert!(res.is_ok());
-        let mut board = res.unwrap();
+        let mut board = res.expect("failed to create solvable board");
         assert!(board.solvable());
         match Astar::run(&board) {
             Some(moves) => {

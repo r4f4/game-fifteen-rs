@@ -56,7 +56,10 @@ Example:
                     for line in lines {
                         let mut v: Vec<&str> = line.split(' ').collect();
                         v.retain(|&x| x != "");
-                        let mut l: Vec<u8> = v.iter().map(|x| x.parse::<u8>().unwrap()).collect();
+                        let mut l: Vec<u8> = v
+                            .iter()
+                            .map(|x| x.parse::<u8>().expect("failed to parse number"))
+                            .collect();
                         config.append(&mut l);
                     }
                     match Board::new_from(config.as_slice()) {
