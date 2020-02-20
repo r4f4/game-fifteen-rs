@@ -163,9 +163,11 @@ impl Board {
             .map(|(i, t)| (t, self.tiles[i..].iter()))
             .map(|(&t, it)| it.filter(|&&x| x != 0 && t != 0 && x < t).count())
             .sum();
-        let even_row = (self.empty / SIZE) % 2 == 0;
-        let even_inv = invs % 2 == 0;
-        (even_row && !even_inv) || (!even_row && even_inv)
+        // (empty tile in even row, even # of inversions)
+        match ((self.empty / SIZE) % 2 == 0, invs % 2 == 0) {
+            (true, false) | (false, true) => true,
+            _ => false,
+        }
     }
 }
 
