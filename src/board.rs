@@ -94,7 +94,7 @@ impl Board {
 
     fn safe_pos(&self, step: isize) -> usize {
         let empty = self.empty;
-        let pos = if step.is_negative() {
+        if step.is_negative() {
             match empty.checked_sub(step.wrapping_abs() as u32 as usize) {
                 Some(v) => v,
                 None => empty,
@@ -104,8 +104,7 @@ impl Board {
                 Some(v) => v,
                 None => empty,
             }
-        };
-        pos
+        }
     }
 
     pub fn slide_safe(&mut self, dir: Direction) -> Result<bool, &'static str> {
