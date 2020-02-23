@@ -145,14 +145,8 @@ impl Board {
     }
 
     pub fn solved(&self) -> bool {
-        // Ignore the empty tile
-        let unsorted = self
-            .tiles
-            .iter()
-            .zip(self.tiles.iter().skip(1))
-            .filter(|(&t1, &t2)| t2 != 0 && t1 > t2)
-            .count();
-        self.empty == self.tiles.len() - 1 && unsorted == 0
+        self.empty == self.tiles.len() - 1 && self.tiles.last() == Some(&0u8) &&
+            self.tiles.windows(2).all(|win| win[1] == 0 || win[0] < win[1])
     }
 
     pub fn solvable(&self) -> bool {
