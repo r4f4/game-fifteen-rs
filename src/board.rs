@@ -43,7 +43,7 @@ impl fmt::Display for Direction {
     }
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Default, Clone, Eq, PartialEq)]
 pub struct Board {
     tiles: [u8; SIZE * SIZE],
     empty: usize,
@@ -51,10 +51,7 @@ pub struct Board {
 
 impl Board {
     pub fn new() -> Board {
-        let mut b = Board {
-            tiles: [0; 16],
-            empty: 0,
-        };
+        let mut b: Board = Default::default();
         for i in 0..16u8 {
             b.tiles[i as usize] = i;
         }
