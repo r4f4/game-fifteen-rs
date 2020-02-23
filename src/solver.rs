@@ -56,15 +56,15 @@ impl Astar {
             .map(|(i, t)| Astar::manhattan_dist(*t, i))
             .sum();
         heap.push(Solution {
-            cost: cost,
+            cost,
             moves: vec![],
             board: b.clone(),
         });
 
         while let Some(Solution {
-            cost: _,
             ref moves,
             ref board,
+            ..
         }) = heap.pop()
         {
             if board.solved() {
