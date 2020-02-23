@@ -14,7 +14,7 @@ pub enum Direction {
 }
 
 impl Direction {
-    pub fn opposite(&self) -> Direction {
+    pub fn opposite(self) -> Direction {
         match self {
             Direction::Left => Direction::Right,
             Direction::Right => Direction::Left,
@@ -23,11 +23,11 @@ impl Direction {
         }
     }
 
-    pub fn opposites(&self, other: Direction) -> bool {
-        other.opposite() == *self
+    pub fn opposites(self, other: Direction) -> bool {
+        other.opposite() == self
     }
 
-    pub fn value(&self) -> isize {
+    pub fn value(self) -> isize {
         match self {
             Direction::Left => -1,
             Direction::Right => 1,
