@@ -175,7 +175,7 @@ impl fmt::Display for Board {
             }
             write!(f, "]")?;
             if i != 3 {
-                write!(f, "\n")?;
+                writeln!(f)?;
             }
         }
         Ok(())
